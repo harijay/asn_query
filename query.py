@@ -1,34 +1,29 @@
 #!/usr/bin/python
+# Simple script to read the tabular results of the ligand entries in the PDB and deposit them into mongodb
 import csv
 import pprint
 import pymongo
 from pymongo import Connection
+from ligand_interactions import list_interactions
 con = Connection()
 db = con.ligandlist
 
-unique_dict = []
 
-reader = csv.reader(open("tabularResults.csv","r"));
+
+reader = csv.DictReader(open("tabularResults.csv","r"));
 outfile = open("liglist.txt","w")
 
 
 for i in reader:
     try:
-        if i[0] in unique_dict:
-            pass
-        else :
-            unique_dict.append(i[0])
-            outfile.write(i[0] + "\n")
-            anentry = {"pdbid" : i[0], "resn":i[2]}
-            # Collection
-            entries = db.entries
-            entries.insert(anentry)
-            
-            #print "Found",len(unique_dict)
+        # Collection Named pdbligands
+        pdbligands = db.pdbligands
+        pdbligands.insert(i)
     except IndexError:
-        print "Number uniques:", len(unique_dict)
+        print "Caught IndexError"
+ 
     
 
 outfile.close()
-pprint.pprint(unique_dict)
+
 
