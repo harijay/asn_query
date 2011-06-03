@@ -9,17 +9,23 @@ con = Connection()
 db = con.ligandlist
 
 
-
+unique_list = []
 reader = csv.DictReader(open("tabularResults.csv","r"));
 outfile = open("liglist.txt","w")
 
 
 for i in reader:
     try:
+        if i["PDB ID"] in unique_list:
+            pass
+        else:
+            unique_list.append(i["PDB ID"])
+            outfile.write(i["PDB ID"] + "\n")
         # Collection Named pdbligands
-        pdbligands = db.pdbligands
-        pdbligands.insert(i)
+ #       pdbligands = db.pdbligands
+ #       pdbligands.insert(i)
     except IndexError:
+        print "Number Uniques:", len(unique_list)
         print "Caught IndexError"
  
     
